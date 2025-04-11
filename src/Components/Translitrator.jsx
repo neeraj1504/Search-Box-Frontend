@@ -110,6 +110,123 @@
 
 // export default Transliterator;
 
+// import React, { useState } from "react";
+
+// // Consonant mappings
+// const consonantMap = {
+//   kh: "ख", gh: "घ", chh: "छ", jh: "झ", th: "थ", dh: "ध",
+//   ph: "फ", bh: "भ", sh: "श", tr: "त्र", gn: "ज्ञ",
+//   k: "क", g: "ग", ch: "च", j: "ज", t: "त", d: "द",
+//   n: "न", p: "प", b: "ब", m: "म", y: "य", r: "र",
+//   l: "ल", v: "व", s: "स", h: "ह", z: "ज़", ṛ: "ड़"
+// };
+
+// // Independent vowels (used at word start or without consonant)
+// const vowelMap = {
+//   ai: "ऐ", au: "औ", aa: "आ", ee: "ई", oo: "ऊ",
+//   a: "अ", i: "इ", u: "उ", e: "ए", o: "ओ"
+// };
+
+// // Dependent matras (used with consonants)
+// const matraMap = {
+//   a: "", aa: "ा", i: "ि", ee: "ी", u: "ु", oo: "ू",
+//   e: "े", ai: "ै", o: "ो", au: "ौ"
+// };
+
+// // Sort keys by length (longest first) to match chunks properly
+// const chunkOrder = (obj) =>
+//   Object.keys(obj).sort((a, b) => b.length - a.length);
+
+// const Transliterator = () => {
+//   const [english, setEnglish] = useState("");
+//   const [hindi, setHindi] = useState("");
+
+//   const consonantChunks = chunkOrder(consonantMap);
+//   const vowelChunks = chunkOrder(vowelMap);
+
+//   const transliterate = (input) => {
+//     let output = "";
+//     let i = 0;
+//     let lastConsonant = "";
+
+//     while (i < input.length) {
+//       let matched = false;
+
+//       // Match consonants
+//       for (let chunk of consonantChunks) {
+//         if (input.slice(i, i + chunk.length).toLowerCase() === chunk) {
+//           lastConsonant = consonantMap[chunk];
+//           output += lastConsonant;
+//           i += chunk.length;
+//           matched = true;
+//           break;
+//         }
+//       }
+//       if (matched) continue;
+
+//       // Match vowels
+//       for (let chunk of vowelChunks) {
+//         if (input.slice(i, i + chunk.length).toLowerCase() === chunk) {
+//           const matra = matraMap[chunk];
+//           if (lastConsonant && matra !== "") {
+//             output = output.slice(0, -1) + lastConsonant + matra;
+//           } else {
+//             output += vowelMap[chunk];
+//           }
+//           lastConsonant = "";
+//           i += chunk.length;
+//           matched = true;
+//           break;
+//         }
+//       }
+
+//       // Fallback for unmatched characters
+//       if (!matched) {
+//         output += input[i];
+//         lastConsonant = "";
+//         i++;
+//       }
+//     }
+
+//     return output;
+//   };
+
+//   const handleChange = (e) => {
+//     const val = e.target.value;
+//     setEnglish(val);
+//     setHindi(transliterate(val));
+//   };
+
+//   return (
+//     <div className="max-w-xl mx-auto p-6">
+//       <h2 className="text-xl font-bold mb-4 text-center">
+//         🔤 English → Hindi Transliterator
+//       </h2>
+//       <textarea
+//         className="w-full p-2 border rounded mb-3"
+//         rows={3}
+//         placeholder="Type in English (e.g. neeraj, namaste, krishna)"
+//         value={english}
+//         onChange={handleChange}
+//       />
+//       <textarea
+//         className="w-full p-2 border rounded bg-gray-100"
+//         rows={3}
+//         value={hindi}
+//         readOnly
+//       />
+//     </div>
+//   );
+// };
+
+// export default Transliterator;
+
+
+
+
+//https://chatgpt.com/c/67f8d5fe-25b4-8004-a60c-104ffbf94b27
+
+
 import React, { useState } from "react";
 
 // Consonant mappings
@@ -118,74 +235,81 @@ const consonantMap = {
   ph: "फ", bh: "भ", sh: "श", tr: "त्र", gn: "ज्ञ",
   k: "क", g: "ग", ch: "च", j: "ज", t: "त", d: "द",
   n: "न", p: "प", b: "ब", m: "म", y: "य", r: "र",
-  l: "ल", v: "व", s: "स", h: "ह", z: "ज़", ṛ: "ड़"
+  l: "ल", v: "व", s: "स", h: "ह", z: "ज़", ṛ: "ड़",ksh:"क्ष"
 };
 
-// Independent vowels (used at word start or without consonant)
-const vowelMap = {
+// Vowel → independent letter
+const vowelLetterMap = {
   ai: "ऐ", au: "औ", aa: "आ", ee: "ई", oo: "ऊ",
-  a: "अ", i: "इ", u: "उ", e: "ए", o: "ओ"
+  a: "ा", i: "इ", u: "उ", e: "ए", o: "ओ"
 };
 
-// Dependent matras (used with consonants)
-const matraMap = {
+// Vowel → matra (used with consonant)
+const vowelMatraMap = {
   a: "", aa: "ा", i: "ि", ee: "ी", u: "ु", oo: "ू",
   e: "े", ai: "ै", o: "ो", au: "ौ"
 };
 
-// Sort keys by length (longest first) to match chunks properly
-const chunkOrder = (obj) =>
-  Object.keys(obj).sort((a, b) => b.length - a.length);
+// Sort keys by length (longest first)
+const sortedChunks = (obj) => Object.keys(obj).sort((a, b) => b.length - a.length);
+
+const consonantChunks = sortedChunks(consonantMap);
+const vowelChunks = sortedChunks(vowelLetterMap);
+
+const isVowelChar = (char) => "aeiou".includes(char.toLowerCase());
 
 const Transliterator = () => {
   const [english, setEnglish] = useState("");
   const [hindi, setHindi] = useState("");
 
-  const consonantChunks = chunkOrder(consonantMap);
-  const vowelChunks = chunkOrder(vowelMap);
-
   const transliterate = (input) => {
     let output = "";
     let i = 0;
-    let lastConsonant = "";
 
     while (i < input.length) {
+      let consonant = "";
+      let vowel = "";
       let matched = false;
 
-      // Match consonants
+      // Extract consonant chunk
       for (let chunk of consonantChunks) {
         if (input.slice(i, i + chunk.length).toLowerCase() === chunk) {
-          lastConsonant = consonantMap[chunk];
-          output += lastConsonant;
+          consonant = chunk;
           i += chunk.length;
-          matched = true;
           break;
         }
       }
-      if (matched) continue;
 
-      // Match vowels
-      for (let chunk of vowelChunks) {
-        if (input.slice(i, i + chunk.length).toLowerCase() === chunk) {
-          const matra = matraMap[chunk];
-          if (lastConsonant && matra !== "") {
-            output = output.slice(0, -1) + lastConsonant + matra;
-          } else {
-            output += vowelMap[chunk];
+      // If no consonant matched, check for standalone vowel
+      if (!consonant) {
+        for (let vchunk of vowelChunks) {
+          if (input.slice(i, i + vchunk.length).toLowerCase() === vchunk) {
+            output += vowelLetterMap[vchunk];
+            i += vchunk.length;
+            matched = true;
+            break;
           }
-          lastConsonant = "";
-          i += chunk.length;
-          matched = true;
+        }
+        if (!matched) {
+          output += input[i];
+          i++;
+        }
+        continue;
+      }
+
+      // Extract following vowel group
+      for (let vchunk of vowelChunks) {
+        if (input.slice(i, i + vchunk.length).toLowerCase() === vchunk) {
+          vowel = vchunk;
+          i += vchunk.length;
           break;
         }
       }
 
-      // Fallback for unmatched characters
-      if (!matched) {
-        output += input[i];
-        lastConsonant = "";
-        i++;
-      }
+      // Get final Hindi character
+      const base = consonantMap[consonant];
+      const matra = vowelMatraMap[vowel || "a"]; // default 'a' matra is ''
+      output += base + matra;
     }
 
     return output;
@@ -199,9 +323,7 @@ const Transliterator = () => {
 
   return (
     <div className="max-w-xl mx-auto p-6">
-      <h2 className="text-xl font-bold mb-4 text-center">
-        🔤 English → Hindi Transliterator
-      </h2>
+      <h2 className="text-xl font-bold mb-4 text-center">🔤 English → Hindi Transliterator</h2>
       <textarea
         className="w-full p-2 border rounded mb-3"
         rows={3}
