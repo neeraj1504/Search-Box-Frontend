@@ -52,7 +52,7 @@ const handleClick = (e)=>{
         {suggestionsArray
           .map((item, index) =>{return (
             <div
-              // onClick={handleClick}
+              onClick={handleClick}
               key={index}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
             >
