@@ -154,6 +154,10 @@ const Suggestion = ({ items, setItems }) => {
       let str1 = input.slice(index, index + 1).toLowerCase();
       let str2 = input.slice(index, index + 2).toLowerCase();
       let str3 = input.slice(index, index + 3).toLowerCase();
+
+      if(str1==" "){
+        backtrack(res+" ",index+1);
+      }
   
       // vowel encounter in beginning
       if (index == 0 && (str1 in vowels || str2 in vowels)) {
@@ -263,7 +267,7 @@ const handleClick = (e)=>{
         {suggestionsArray
           .map((item, index) =>{return (
             <div
-              onClick={handleClick}
+              // onClick={handleClick}
               key={index}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
             >
