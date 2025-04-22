@@ -57,9 +57,9 @@ const Suggestion = ({ items, setItems }) => {
     "ो": ["o"],
     "ौ": ["au"],
     "ृ": ["ri"],
-    "्": [""],
     " ँ": ["n"],
-    "ं": ["n"],
+    "ं": ["n"]
+
   };
   
   function transliterateToEnglish(input) {
@@ -72,9 +72,15 @@ const Suggestion = ({ items, setItems }) => {
       }
   
       let char = input[index];
+      //To handle the space character
+      if(char!=" "){
       for (let i = 0; i < hindiToEnglish[char].length; i++) {
         backtrack(index + 1, res + hindiToEnglish[char][i]);
       }
+    }else{
+      backtrack(index + 1, res + " ");
+    }
+    
     }
   
     backtrack(0, "");
@@ -221,25 +227,34 @@ const Suggestion = ({ items, setItems }) => {
         transiteratedPrefix=transliterateToHindi(prefix);
       }
     }
+  
 
       let queryPrefix=`${prefix},${transiteratedPrefix}`;
-
-     fetch(`http://localhost:8000/api/v1/getWords?prefix=${queryPrefix}`)
+      //TO handle the trailing spaces in the query string
+     fetch(`http://localhost:8000/api/v1/getWords?prefix=${encodeURIComponent(queryPrefix)}`)
      .then((res)=>res.json()
      ).then((res)=>{
-        if(items){
+        if(items&&transiteratedPrefix.length
+        ){
           setSuggestionsArray(res.data);
+        }
+        else{
+          //To remove the persisiting suggestions from the div after the input box set to empty
+          setSuggestionsArray([]);
         }
      })
 
       console.log(transiteratedPrefix);
+      console.log(prefix);
       
 
   },[items])
   
  
-
-
+//To add the clicked suggestion in the input box
+const handleClick = (e)=>{
+  setItems(e.target.innerHTML);
+}
 
 
   return (
@@ -248,7 +263,7 @@ const Suggestion = ({ items, setItems }) => {
         {suggestionsArray
           .map((item, index) =>{return (
             <div
-              onClick={() => setItems(item)}
+              onClick={handleClick}
               key={index}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
             >
@@ -261,3 +276,7 @@ const Suggestion = ({ items, setItems }) => {
 };
 
 export default Suggestion;
+
+
+
+//   "्": [""],

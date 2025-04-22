@@ -12,7 +12,8 @@ const Searchbox = ({ items, setItems }) => {
   };
 
   return (
-    <div className="flex items-center border border-gray-300 border-b-0 rounded-t-md px-4 py-2 shadow-md bg-white w-full max-w-md mx-auto">
+    //Added css to round the corners of the input box
+    <div className="flex items-center border border-gray-300 border-b-0 rounded-xl px-4 py-2 shadow-md bg-white w-full max-w-md mx-auto">
       <FiSearch className="text-gray-500 mr-2" />
       <input
         type="text"
