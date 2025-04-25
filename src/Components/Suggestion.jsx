@@ -15,9 +15,10 @@ const Suggestion = ({ items, setItems }) => {
 
           res.data.map((element) => {
             newArray.push(element.word);
-            element.transliterations.map((transWord) => {
-              newArray.push(transWord);
-            })
+            // element.transliterations.map((transWord) => {
+            //   newArray.push(transWord);
+            // })
+            newArray.push(...element.transliterations);
           });
           return newArray;
         }).then((res) => {
@@ -42,7 +43,7 @@ const Suggestion = ({ items, setItems }) => {
 
   return (
     <div className="w-full max-w-md mx-auto h-auto">
-      <div className="border border-t-0 border-gray-300 rounded-b-md h-auto overflow-y-auto bg-white shadow-md">
+      <div className="border border-t-0 border-gray-300 rounded-b-md max-h-screen overflow-y-auto bg-white shadow-md">
         {suggestionsArray
           .map((item, index) => {
             return (
