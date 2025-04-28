@@ -7,7 +7,7 @@ const App = () => {
 
   return (
     //Added some extra css like bg color 
-    <div className="flex flex-col items-center justify-start min-h-screen pt-10 px-4 bg-indigo-200">
+    <div className="flex flex-col items-center justify-start min-h-screen overflow-y-auto pt-10 px-4 bg-indigo-200">
       <Searchbox items={items} setItems={setItems} />
       <Suggestion items={items} setItems={setItems} />
     </div>
